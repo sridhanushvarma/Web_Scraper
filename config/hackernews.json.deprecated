@@ -1,0 +1,30 @@
+{
+    "name": "Hacker News",
+    "description": "Extract stories from Hacker News front page",
+    "container_selector": ".athing",
+    "fields": [
+        {
+            "name": "rank",
+            "selector": ".rank",
+            "selector_type": "css"
+        },
+        {
+            "name": "title",
+            "selector": ".titleline > a",
+            "selector_type": "css"
+        },
+        {
+            "name": "url",
+            "selector": ".titleline > a",
+            "selector_type": "css",
+            "attribute": "href"
+        },
+        {
+            "name": "site",
+            "selector": ".sitestr",
+            "selector_type": "css"
+        }
+    ],
+    "suitable_for": ["news", "tech", "hackernews"]
+}
+

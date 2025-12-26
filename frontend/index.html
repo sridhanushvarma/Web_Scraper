@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper - Multi-Website Data Extraction</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 sm:py-6">
+            <h1 class="text-2xl sm:text-3xl font-bold">Web Scraper</h1>
+            <p class="text-blue-100 mt-1 text-sm sm:text-base">Extract structured data from any website</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-4 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+            <!-- Configuration Panel -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 config-panel lg:sticky lg:top-4">
+                    <h2 class="text-lg sm:text-xl font-semibold mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Configuration
+                    </h2>
+
+                    <!-- URL Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Target URL</label>
+                        <input type="url" id="url-input" placeholder="https://example.com"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <button id="detect-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            Auto-detect page type
+                        </button>
+                        <div id="detect-result" class="hidden mt-2 text-sm p-2 bg-gray-50 rounded"></div>
+                    </div>
+
+                    <!-- Scraper Type -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Scraper Type</label>
+                        <select id="scraper-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="auto">Auto-detect</option>
+                            <option value="static">Static (Fast)</option>
+                            <option value="dynamic">Dynamic (JavaScript)</option>
+                        </select>
+                    </div>
+
+                    <!-- Category Selection -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Website Category</label>
+                        <select id="category-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="">-- All Categories --</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Select a category to filter presets</p>
+                    </div>
+
+                    <!-- Preset Selection -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Use Preset</label>
+                        <select id="preset-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="">-- Select a preset --</option>
+                        </select>
+                        <button id="suggest-presets-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            Suggest presets for URL
+                        </button>
+                    </div>
+
+                    <!-- Container Selector -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Container Selector <span class="text-gray-400">(optional)</span>
+                        </label>
+                        <input type="text" id="container-selector" placeholder=".item, article, .product"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <p class="text-xs text-gray-500 mt-1">CSS selector for repeating elements</p>
+                    </div>
+
+                    <!-- Extraction Fields -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Extraction Fields</label>
+                        <div id="fields-container" class="space-y-3">
+                            <!-- Fields will be added here -->
+                        </div>
+                        <button id="add-field-btn" class="mt-3 text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Add Field
+                        </button>
+                    </div>
+
+                    <!-- Advanced Options -->
+                    <details class="mb-4">
+                        <summary class="cursor-pointer text-sm font-medium text-gray-700">
+                            Advanced Options
+                        </summary>
+                        <div class="mt-3 space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-600">Wait for Selector</label>
+                                <input type="text" id="wait-selector" placeholder=".content-loaded"
+                                       class="w-full px-2 py-1 text-sm border rounded">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600">Timeout (seconds)</label>
+                                <input type="number" id="timeout" value="30" min="5" max="120"
+                                       class="w-full px-2 py-1 text-sm border rounded">
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="enable-pagination" class="mr-2">
+                                <label class="text-xs text-gray-600">Enable Pagination</label>
+                            </div>
+                            <div id="pagination-options" class="hidden pl-4">
+                                <input type="text" id="next-page-selector" placeholder="a.next-page"
+                                       class="w-full px-2 py-1 text-sm border rounded mb-2">
+                                <input type="number" id="max-pages" value="5" min="1" max="50"
+                                       class="w-full px-2 py-1 text-sm border rounded" placeholder="Max pages">
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Scrape Button -->
+                    <button id="scrape-btn"
+                            class="w-full btn-primary py-3 rounded-lg font-semibold flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Start Scraping
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="lg:col-span-2">
+                <!-- Status Bar -->
+                <div id="status-bar" class="hidden mb-4 p-4 rounded-lg"></div>
+
+                <!-- View Toggle -->
+                <div class="bg-white rounded-lg shadow-lg p-3 sm:p-4 mb-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div class="flex space-x-2">
+                            <button class="view-btn active px-3 sm:px-4 py-2 rounded-lg text-sm" data-view="table">Table</button>
+                            <button class="view-btn px-3 sm:px-4 py-2 rounded-lg text-sm" data-view="cards">Cards</button>
+                            <button class="view-btn px-3 sm:px-4 py-2 rounded-lg text-sm" data-view="json">JSON</button>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="export-csv" class="hidden text-sm btn-secondary px-3 py-1 rounded">
+                                Export CSV
+                            </button>
+                            <button id="export-json" class="hidden text-sm btn-secondary px-3 py-1 rounded">
+                                Export JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Container -->
+                <div id="results-container" class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                    <div id="empty-state" class="text-center py-8 sm:py-12 text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                        </svg>
+                        <p class="text-lg sm:text-xl">Enter a URL and configure extraction fields to start scraping</p>
+                        <p class="text-sm mt-2">Select a preset for common website types</p>
+                    </div>
+
+                    <div id="loading-state" class="hidden text-center py-8 sm:py-12">
+                        <div class="loading-spinner mb-4"></div>
+                        <p class="text-lg sm:text-xl text-gray-600">Scraping in progress...</p>
+                        <p class="text-sm text-gray-400 mt-2">This may take a few seconds</p>
+                    </div>
+
+                    <div id="table-view" class="hidden overflow-x-auto"></div>
+                    <div id="cards-view" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    <div id="json-view" class="hidden">
+                        <pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"></pre>
+                    </div>
+                </div>
+
+                <!-- Metadata -->
+                <div id="metadata" class="hidden mt-4 bg-white rounded-lg shadow p-4 text-sm text-gray-600">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-4 sm:py-6 mt-8 sm:mt-12">
+        <div class="container mx-auto px-4 text-center text-sm sm:text-base">
+            <p>Web Scraper - Configuration-driven data extraction</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+

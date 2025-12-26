@@ -1,0 +1,19 @@
+name: Quotes to Scrape
+description: Extract quotes from quotes.toscrape.com (demo site)
+container_selector: .quote
+fields:
+  - name: text
+    selector: .text
+    selector_type: css
+  - name: author
+    selector: .author
+    selector_type: css
+  - name: tags
+    selector: .tag
+    selector_type: css
+    multiple: true
+suitable_for:
+  - quotes
+  - demo
+  - practice
+
